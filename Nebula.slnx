@@ -1,0 +1,59 @@
+<Solution>
+  <Configurations>
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="build.ps1" />
+    <File Path="Directory.Build.props" />
+    <File Path="global.json" />
+    <File Path="Launch-Nebula.ps1" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Nebula.Core/Nebula.Core.csproj" />
+    <Project Path="src/Nebula.Embed/Nebula.Embed.csproj" />
+    <Project Path="src/Nebula.Windows/Nebula.Windows.csproj">
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/src/Nebula.Render/">
+    <File Path="src/Nebula.Render/BoundedQueue.h" />
+    <File Path="src/Nebula.Render/build.ps1" />
+    <File Path="src/Nebula.Render/CompileShaders.cpp" />
+    <File Path="src/Nebula.Render/DepthEffects.h" />
+    <File Path="src/Nebula.Render/DepthShaderTests.h" />
+    <File Path="src/Nebula.Render/GlassMaterial.h" />
+    <File Path="src/Nebula.Render/Highlight.h" />
+    <File Path="src/Nebula.Render/LodPolicy.h" />
+    <File Path="src/Nebula.Render/LodTests.h" />
+    <File Path="src/Nebula.Render/MipCache.h" />
+    <File Path="src/Nebula.Render/MosaicAverages.h" />
+    <File Path="src/Nebula.Render/NebulaRender.cpp" />
+    <File Path="src/Nebula.Render/NebulaRender.h" />
+    <File Path="src/Nebula.Render/OriginalLoader.h" />
+    <File Path="src/Nebula.Render/PickGrid.h" />
+    <File Path="src/Nebula.Render/RenderLimits.h" />
+    <File Path="src/Nebula.Render/RenderRecords.h" />
+    <File Path="src/Nebula.Render/ReportTests.h" />
+    <File Path="src/Nebula.Render/ShaderBytecode.h" />
+    <File Path="src/Nebula.Render/Shaders.h" />
+    <File Path="src/Nebula.Render/ShaderTests.h" />
+    <File Path="src/Nebula.Render/smoke.cpp" />
+    <File Path="src/Nebula.Render/ThumbnailDecoder.h" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Nebula.Core.Tests/Nebula.Core.Tests.csproj" />
+    <File Path="tests/Test-UI.ps1" />
+    <File Path="tests/create_fixtures.py" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/Nebula.Embed.Cli/Nebula.Embed.Cli.csproj" />
+    <Project Path="tools/Nebula.Import/Nebula.Import.csproj" />
+    <File Path="tools/make_icons.py" />
+    <File Path="tools/prepare_models.py" />
+  </Folder>
+</Solution>

@@ -1,0 +1,723 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+  -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PhotoCanvas.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Photo canvas. Two-finger scroll or Alt-drag to orbit, drag to pan, pinch or wheel to zoom. Explore lists the same photos for keyboard and screen readers.</value>
+  </data>
+  <data name="SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Search your photos</value>
+  </data>
+  <data name="SearchBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Search your photos</value>
+  </data>
+  <data name="SearchBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.HelpText" xml:space="preserve">
+    <value>Matches titles, artists, materials and filenames on this device</value>
+  </data>
+  <data name="ClearSearchButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Clear search</value>
+  </data>
+  <data name="ClearSearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Clear search (Esc)</value>
+  </data>
+  <data name="ArrangementSegments.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Arrange photos</value>
+  </data>
+  <data name="ModeCloud.Content" xml:space="preserve">
+    <value>Cloud</value>
+  </data>
+  <data name="ModeCloud.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Cloud (1)</value>
+  </data>
+  <data name="ModeSimilarity.Content" xml:space="preserve">
+    <value>Similarity</value>
+  </data>
+  <data name="ModeSimilarity.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Similarity · needs the local image model</value>
+  </data>
+  <data name="ModeTime.Content" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="ModeTime.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Time (3)</value>
+  </data>
+  <data name="ModeColour.Content" xml:space="preserve">
+    <value>Colour</value>
+  </data>
+  <data name="ModeColour.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Colour (2)</value>
+  </data>
+  <data name="ModeGrid.Content" xml:space="preserve">
+    <value>Grid</value>
+  </data>
+  <data name="ModeGrid.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Grid (4)</value>
+  </data>
+  <data name="CompactArrangeButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Arrange photos</value>
+  </data>
+  <data name="MenuCloud.Text" xml:space="preserve">
+    <value>Cloud</value>
+  </data>
+  <data name="MenuSimilarity.Text" xml:space="preserve">
+    <value>Similarity</value>
+  </data>
+  <data name="MenuTime.Text" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="MenuColour.Text" xml:space="preserve">
+    <value>Colour</value>
+  </data>
+  <data name="MenuGrid.Text" xml:space="preserve">
+    <value>Grid</value>
+  </data>
+  <data name="PixelsButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Pixels</value>
+  </data>
+  <data name="PixelsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Pixels · draw photos as blocks of their own colours</value>
+  </data>
+  <data name="PixelsPhotos.Text" xml:space="preserve">
+    <value>Photos</value>
+  </data>
+  <data name="Pixels128.Text" xml:space="preserve">
+    <value>128 pixels</value>
+  </data>
+  <data name="Pixels64.Text" xml:space="preserve">
+    <value>64 pixels</value>
+  </data>
+  <data name="Pixels16.Text" xml:space="preserve">
+    <value>16 pixels</value>
+  </data>
+  <data name="Pixels4.Text" xml:space="preserve">
+    <value>4 pixels</value>
+  </data>
+  <data name="Pixels1.Text" xml:space="preserve">
+    <value>1 colour</value>
+  </data>
+  <data name="FitButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Fit collection</value>
+  </data>
+  <data name="FitButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Fit collection (Home)</value>
+  </data>
+  <data name="BackButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Previous view</value>
+  </data>
+  <data name="BackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Previous view (Alt+Left)</value>
+  </data>
+  <data name="MoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>More options</value>
+  </data>
+  <data name="MoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>More</value>
+  </data>
+  <data name="AddFolderMenuItem.Text" xml:space="preserve">
+    <value>Add a folder…</value>
+  </data>
+  <data name="RescanMenuItem.Text" xml:space="preserve">
+    <value>Check for changes</value>
+  </data>
+  <data name="AppearanceMenu.Text" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="AppearanceSystemItem.Text" xml:space="preserve">
+    <value>Use system setting</value>
+  </data>
+  <data name="AppearanceLightItem.Text" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="AppearanceDarkItem.Text" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="ControlsMenuItem.Text" xml:space="preserve">
+    <value>Controls &amp; shortcuts</value>
+  </data>
+  <data name="ImportDetailsMenuItem.Text" xml:space="preserve">
+    <value>Import details</value>
+  </data>
+  <data name="AboutMenuItem.Text" xml:space="preserve">
+    <value>About Nebula</value>
+  </data>
+  <data name="ClearFilterButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Remove filter, keep search</value>
+  </data>
+  <data name="ClearFilterButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remove filter</value>
+  </data>
+  <data name="ShowSidebarButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Show sidebar</value>
+  </data>
+  <data name="ShowSidebarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Show sidebar (Ctrl+Alt+S)</value>
+  </data>
+  <data name="SidebarAppName.Text" xml:space="preserve">
+    <value>Nebula</value>
+  </data>
+  <data name="HideSidebarButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Hide sidebar</value>
+  </data>
+  <data name="HideSidebarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Hide sidebar (Ctrl+Alt+S)</value>
+  </data>
+  <data name="LibraryHeader.Text" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="LibraryList.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="AllPhotosItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>All Photos</value>
+  </data>
+  <data name="AllPhotosLabel.Text" xml:space="preserve">
+    <value>All Photos</value>
+  </data>
+  <data name="ThisYearItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>This Year</value>
+  </data>
+  <data name="ThisYearLabel.Text" xml:space="preserve">
+    <value>This Year</value>
+  </data>
+  <data name="FavouritesItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Favourites</value>
+  </data>
+  <data name="FavouritesLabel.Text" xml:space="preserve">
+    <value>Favourites</value>
+  </data>
+  <data name="SourcesHeader.Text" xml:space="preserve">
+    <value>Sources</value>
+  </data>
+  <data name="RevealSourceButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Show this folder in File Explorer</value>
+  </data>
+  <data name="AddFolderButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Add a folder</value>
+  </data>
+  <data name="AddFolderButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Add a folder of photos (Ctrl+O)</value>
+  </data>
+  <data name="AddFolderLabel.Text" xml:space="preserve">
+    <value>Add a folder…</value>
+  </data>
+  <data name="ExploreBackButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Back to overview</value>
+  </data>
+  <data name="ExploreBackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Overview</value>
+  </data>
+  <data name="ExpandExploreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Expand or collapse Explore</value>
+  </data>
+  <data name="ExpandExploreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Expand</value>
+  </data>
+  <data name="FactShowPhotosLabel.Text" xml:space="preserve">
+    <value>Show photos</value>
+  </data>
+  <data name="FactNextLabel.Text" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="FacetsList.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Collection measurements</value>
+  </data>
+  <data name="ResultsList.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Photos</value>
+  </data>
+  <data name="NoFacetsText.Text" xml:space="preserve">
+    <value>Nothing to measure in this collection yet.</value>
+  </data>
+  <data name="NoResultsText.Text" xml:space="preserve">
+    <value>No photos match. Remove the filter or try other words.</value>
+  </data>
+  <data name="SimilarityPanel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Visual groups</value>
+  </data>
+  <data name="NearestHeader.Text" xml:space="preserve">
+    <value>NEAREST TO THE SELECTED PHOTO</value>
+  </data>
+  <data name="NearestNote.Text" xml:space="preserve">
+    <value>Bar = similarity. Lines on the canvas join the selected photo to these.</value>
+  </data>
+  <data name="GroupMapFrame.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Map of visual groups</value>
+  </data>
+  <data name="GroupMapNote.Text" xml:space="preserve">
+    <value>Bubble area = photos in the group. The map follows the cloud as you orbit.</value>
+  </data>
+  <data name="CategoriesHeader.Text" xml:space="preserve">
+    <value>CATEGORIES</value>
+  </data>
+  <data name="GroupShowPhotosLabel.Text" xml:space="preserve">
+    <value>Show photos</value>
+  </data>
+  <data name="GroupFocusLabel.Text" xml:space="preserve">
+    <value>Focus</value>
+  </data>
+  <data name="GroupClearLabel.Text" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="DrillLeavesTitle.Text" xml:space="preserve">
+    <value>CLUSTERS IN THIS CATEGORY</value>
+  </data>
+  <data name="LinksTitle.Text" xml:space="preserve">
+    <value>CONNECTED GROUPS</value>
+  </data>
+  <data name="BridgeHeader.Text" xml:space="preserve">
+    <value>BRIDGE PHOTOS, NEIGHBOURS IN SEVERAL GROUPS</value>
+  </data>
+  <data name="PreviewFrame.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Selected photo</value>
+  </data>
+  <data name="InspectorEmpty.Text" xml:space="preserve">
+    <value>Select a photo to see it here.</value>
+  </data>
+  <data name="OpenOriginalButton.Content" xml:space="preserve">
+    <value>Open original</value>
+  </data>
+  <data name="FavouriteButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Favourite</value>
+  </data>
+  <data name="FavouriteButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Favourite · saved on this device</value>
+  </data>
+  <data name="FramePhotoButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Frame photo</value>
+  </data>
+  <data name="FramePhotoButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Frame photo (Space)</value>
+  </data>
+  <data name="CloseInspectorButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="CloseInspectorButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="EmptyTitle.Text" xml:space="preserve">
+    <value>Add your photos</value>
+  </data>
+  <data name="EmptyDescription.Text" xml:space="preserve">
+    <value>Choose a folder. Nebula reads it on this PC and lays every photo out in space — by time, by colour, as a cloud.</value>
+  </data>
+  <data name="EmptyOpenFolderLabel.Text" xml:space="preserve">
+    <value>A folder…</value>
+  </data>
+  <data name="EmptyMuseumLabel.Text" xml:space="preserve">
+    <value>Museum sample</value>
+  </data>
+  <data name="EmptyPrivacyNote.Text" xml:space="preserve">
+    <value>Photos stay on this PC. Originals are never changed.</value>
+  </data>
+  <data name="ImportTitle.Text" xml:space="preserve">
+    <value>Bringing your photos into view</value>
+  </data>
+  <data name="CancelImportButton.Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CollectionNotice.Title" xml:space="preserve">
+    <value>Notice</value>
+  </data>
+  <data name="Explore_Title" xml:space="preserve">
+    <value>Explore</value>
+  </data>
+  <data name="Explore_Description" xml:space="preserve">
+    <value>Follow a part of your collection.</value>
+  </data>
+  <data name="Error_CollectionOpen" xml:space="preserve">
+    <value>The collection could not be opened.</value>
+  </data>
+  <data name="Error_Renderer" xml:space="preserve">
+    <value>The native renderer reported an error.</value>
+  </data>
+  <data name="Error_PreferencesSave" xml:space="preserve">
+    <value>Your preferences could not be saved on this device.</value>
+  </data>
+  <data name="Status_RendererReady" xml:space="preserve">
+    <value>{0:N0} / {1:N0} ready</value>
+  </data>
+  <data name="Error_RendererStatus" xml:space="preserve">
+    <value>Renderer status is unavailable.</value>
+  </data>
+  <data name="Error_FolderPicker" xml:space="preserve">
+    <value>The folder picker could not open.</value>
+  </data>
+  <data name="Import_LookingForPhotos" xml:space="preserve">
+    <value>Looking for photos…</value>
+  </data>
+  <data name="Status_Importing" xml:space="preserve">
+    <value>Importing…</value>
+  </data>
+  <data name="Import_Progress" xml:space="preserve">
+    <value>{0:N0} of {1:N0} ready</value>
+  </data>
+  <data name="Error_ImportUnreadable" xml:space="preserve">
+    <value>{0:N0} files or folders could not be read. Import details lists the reasons.</value>
+  </data>
+  <data name="Error_ImportCancelled" xml:space="preserve">
+    <value>Import cancelled. Your previous collection is unchanged.</value>
+  </data>
+  <data name="Error_ImportIncomplete" xml:space="preserve">
+    <value>Import did not complete. Originals were not changed.</value>
+  </data>
+  <data name="Library_EmptyName" xml:space="preserve">
+    <value>Nebula</value>
+  </data>
+  <data name="Library_CountNone" xml:space="preserve">
+    <value>No photos yet</value>
+  </data>
+  <data name="Status_NoPhotosYet" xml:space="preserve">
+    <value>No photos yet</value>
+  </data>
+  <data name="Error_PreviewArrange" xml:space="preserve">
+    <value>The collection preview could not be arranged.</value>
+  </data>
+  <data name="Library_Count" xml:space="preserve">
+    <value>{0:N0} photos</value>
+  </data>
+  <data name="Explore_TimeTitle" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="Explore_TimeDescription" xml:space="preserve">
+    <value>{0:N0} of {1:N0} photos dated</value>
+  </data>
+  <data name="Explore_YearsEyebrow" xml:space="preserve">
+    <value>YEARS</value>
+  </data>
+  <data name="Explore_ColourTitle" xml:space="preserve">
+    <value>Colour</value>
+  </data>
+  <data name="Explore_ColourDescription" xml:space="preserve">
+    <value>{0:N0} photos · average colour</value>
+  </data>
+  <data name="Explore_ColoursEyebrow" xml:space="preserve">
+    <value>COLOURS</value>
+  </data>
+  <data name="Explore_LibraryTitle" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="Explore_LibraryDescriptionDepartments" xml:space="preserve">
+    <value>{0:N0} photos · {1:N0} departments</value>
+  </data>
+  <data name="Explore_LibraryDescription" xml:space="preserve">
+    <value>{0:N0} photos</value>
+  </data>
+  <data name="Explore_DepartmentsEyebrow" xml:space="preserve">
+    <value>DEPARTMENTS</value>
+  </data>
+  <data name="Explore_ShapesEyebrow" xml:space="preserve">
+    <value>SHAPES</value>
+  </data>
+  <data name="Fact_Value" xml:space="preserve">
+    <value>{0:N0} photos</value>
+  </data>
+  <data name="Fact_Body" xml:space="preserve">
+    <value>{0} · {1:P0} of the library</value>
+  </data>
+  <data name="Fact_LargestDepartment" xml:space="preserve">
+    <value>Largest department</value>
+  </data>
+  <data name="Fact_MostCommonColour" xml:space="preserve">
+    <value>Most common colour</value>
+  </data>
+  <data name="Fact_BusiestYear" xml:space="preserve">
+    <value>Busiest year</value>
+  </data>
+  <data name="Fact_MostCommonShape" xml:space="preserve">
+    <value>Most common shape</value>
+  </data>
+  <data name="Results_Count" xml:space="preserve">
+    <value>{0:N0} of {1:N0} photos</value>
+  </data>
+  <data name="Results_FirstNote" xml:space="preserve">
+    <value>FIRST 150 · ALL ON THE CANVAS</value>
+  </data>
+  <data name="Filter_ThisYear" xml:space="preserve">
+    <value>This Year</value>
+  </data>
+  <data name="Filter_Favourites" xml:space="preserve">
+    <value>Favourites</value>
+  </data>
+  <data name="Status_SearchKindSemantic" xml:space="preserve">
+    <value>semantic</value>
+  </data>
+  <data name="Status_SearchKindMetadata" xml:space="preserve">
+    <value>metadata</value>
+  </data>
+  <data name="Status_SearchResults" xml:space="preserve">
+    <value>“{0}” — {1:N0} of {2:N0} · {3}</value>
+  </data>
+  <data name="Status_FilteredPhotos" xml:space="preserve">
+    <value>{0:N0} of {1:N0} photos · {2}</value>
+  </data>
+  <data name="Status_Photos" xml:space="preserve">
+    <value>{0:N0} photos · {1}</value>
+  </data>
+  <data name="Status_TimeNoDates" xml:space="preserve">
+    <value>{0:N0} photos · Time · no capture dates</value>
+  </data>
+  <data name="Error_ArrangementCompute" xml:space="preserve">
+    <value>This arrangement could not be computed.</value>
+  </data>
+  <data name="Explore_SearchTitle" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Explore_FavouritesTitle" xml:space="preserve">
+    <value>Favourites</value>
+  </data>
+  <data name="Explore_ThisYearTitle" xml:space="preserve">
+    <value>This Year</value>
+  </data>
+  <data name="Explore_PhotosTitle" xml:space="preserve">
+    <value>Photos</value>
+  </data>
+  <data name="Explore_SearchDescription" xml:space="preserve">
+    <value>{0} · titles, artists, materials</value>
+  </data>
+  <data name="Explore_FavouritesDescription" xml:space="preserve">
+    <value>{0} · saved on this PC</value>
+  </data>
+  <data name="Explore_PhotosEyebrow" xml:space="preserve">
+    <value>PHOTOS</value>
+  </data>
+  <data name="Inspector_LoadingPreview" xml:space="preserve">
+    <value>Loading local preview…</value>
+  </data>
+  <data name="Inspector_PreviewUnavailable" xml:space="preserve">
+    <value>Original unavailable locally · showing cached thumbnail</value>
+  </data>
+  <data name="Favourite_RemoveName" xml:space="preserve">
+    <value>Remove photo from favourites</value>
+  </data>
+  <data name="Favourite_AddName" xml:space="preserve">
+    <value>Add photo to favourites</value>
+  </data>
+  <data name="Favourite_RemoveTip" xml:space="preserve">
+    <value>Remove favourite · saved on this device</value>
+  </data>
+  <data name="Favourite_AddTip" xml:space="preserve">
+    <value>Favourite · saved on this device</value>
+  </data>
+  <data name="Error_FavouriteSave" xml:space="preserve">
+    <value>This favourite could not be saved.</value>
+  </data>
+  <data name="Error_NoAppForImage" xml:space="preserve">
+    <value>Windows could not find an app to open this image.</value>
+  </data>
+  <data name="Error_OriginalOpen" xml:space="preserve">
+    <value>The original could not be opened.</value>
+  </data>
+  <data name="Sidebar_Hide" xml:space="preserve">
+    <value>Hide sidebar</value>
+  </data>
+  <data name="Sidebar_Show" xml:space="preserve">
+    <value>Show sidebar</value>
+  </data>
+  <data name="Explore_CollapseTip" xml:space="preserve">
+    <value>Collapse</value>
+  </data>
+  <data name="Explore_ExpandTip" xml:space="preserve">
+    <value>Expand</value>
+  </data>
+  <data name="Error_FolderShow" xml:space="preserve">
+    <value>The folder could not be shown.</value>
+  </data>
+  <data name="Dialog_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ImportDetails_NoLibrary" xml:space="preserve">
+    <value>No library is open.</value>
+  </data>
+  <data name="ImportDetails_Summary" xml:space="preserve">
+    <value>{0:N0} imported, {1:N0} skipped.
+
+</value>
+  </data>
+  <data name="ImportDetails_NoErrors" xml:space="preserve">
+    <value>No decoding or source errors.</value>
+  </data>
+  <data name="ImportDetails_Title" xml:space="preserve">
+    <value>Import details</value>
+  </data>
+  <data name="Controls_Title" xml:space="preserve">
+    <value>Moving around</value>
+  </data>
+  <data name="Controls_Text" xml:space="preserve">
+    <value>Touchpad
+  Two-finger scroll sideways — turn the cloud
+  Two-finger scroll up and down — tilt it
+  Pinch — zoom
+
+Mouse
+  Drag — pan · Alt-drag or right-drag — orbit · Wheel — zoom
+
+Photos
+  Click — select and fly to it · Double-click — back to where you were
+  Double-click empty space — the whole library · Click empty space — deselect
+
+Keys
+  Ctrl+F  Search · Ctrl+O  Add a folder · Ctrl+Alt+S  Sidebar
+  Home  Fit · Alt+Left  Back · Esc  Deselect, then remove filter, then clear search
+  1–5  Cloud, Colour, Time, Grid, Similarity · Arrows  Orbit · + −  Zoom · Space  Frame selection
+
+Search reads what is in each photo with a local image model, and also matches titles, artists, materials and filenames.</value>
+  </data>
+  <data name="About_Title" xml:space="preserve">
+    <value>Nebula for Windows</value>
+  </data>
+  <data name="About_Text" xml:space="preserve">
+    <value>Your collection, on your device.
+
+Native WinUI and Direct3D. Cloud, Similarity, Colour, Time and Grid arrangements, search by what is in a photo, and favourites.
+
+Search and Similarity run SigLIP 2 on this PC through Windows ML. No face recognition or location analysis.
+
+No photo uploads. Originals remain unchanged. Favourites and appearance preferences are stored in LocalAppData\Nebula\Data, separately from your photos.</value>
+  </data>
+  <data name="Status_UnderstandingPhotos" xml:space="preserve">
+    <value>understanding photos · {0}</value>
+  </data>
+  <data name="Similarity_ReadyTip" xml:space="preserve">
+    <value>Similarity · photos that look alike sit together (5)</value>
+  </data>
+  <data name="Similarity_PendingTip" xml:space="preserve">
+    <value>Similarity · available once photos are understood</value>
+  </data>
+  <data name="Similarity_NeedsModelTip" xml:space="preserve">
+    <value>Similarity · needs the local image model</value>
+  </data>
+  <data name="Error_SimilarityNotReady" xml:space="preserve">
+    <value>Similarity needs the local image model; photos are still being understood.</value>
+  </data>
+  <data name="Status_PinnedGroup" xml:space="preserve">
+    <value>{0} · {1:N0} photos · {2}</value>
+  </data>
+  <data name="Status_PinnedSimilarity" xml:space="preserve">
+    <value>Similarity</value>
+  </data>
+  <data name="Status_PinnedGathered" xml:space="preserve">
+    <value>gathered</value>
+  </data>
+  <data name="Groups_Finding" xml:space="preserve">
+    <value>finding visual groups…</value>
+  </data>
+  <data name="Groups_Failed" xml:space="preserve">
+    <value>Visual groups could not be computed on this PC.</value>
+  </data>
+  <data name="Groups_Title" xml:space="preserve">
+    <value>Visual groups</value>
+  </data>
+  <data name="Groups_NeedsModel" xml:space="preserve">
+    <value>needs the local image model</value>
+  </data>
+  <data name="Groups_Description" xml:space="preserve">
+    <value>{0:N0} categories · {1:N0} clusters · {2:N0} of {3:N0} photos</value>
+  </data>
+  <data name="Groups_Pending" xml:space="preserve">
+    <value>Visual groups appear once the local image model has seen every photo.</value>
+  </data>
+  <data name="Nearest_SimilarityTip" xml:space="preserve">
+    <value>similarity {0:F2}</value>
+  </data>
+  <data name="Nearest_ThumbName" xml:space="preserve">
+    <value>{0}, similarity {1:F2}</value>
+  </data>
+  <data name="Group_Mixed" xml:space="preserve">
+    <value>Mixed</value>
+  </data>
+  <data name="Group_RowName" xml:space="preserve">
+    <value>{0}, {1:N0} photos</value>
+  </data>
+  <data name="Categories_More" xml:space="preserve">
+    <value>{0:N0} more categories when expanded.</value>
+  </data>
+  <data name="Drill_GroupSummary" xml:space="preserve">
+    <value>{0:N0} photos · coherence {1:F2}</value>
+  </data>
+  <data name="Drill_Links" xml:space="preserve">
+    <value>{0} links</value>
+  </data>
+  <data name="Drill_CategorySummary" xml:space="preserve">
+    <value>{0:N0} photos in {1:N0} clusters</value>
+  </data>
+  <data name="Facet_Description" xml:space="preserve">
+    <value>{0}, {1:N0} of {2:N0} photos</value>
+  </data>
+  <data name="Library_DefaultName" xml:space="preserve">
+    <value>Your library</value>
+  </data>
+  <data name="Library_NoFolder" xml:space="preserve">
+    <value>No folder added</value>
+  </data>
+  <data name="Status_Default" xml:space="preserve">
+    <value>On your device. Originals untouched.</value>
+  </data>
+  <data name="Results_None" xml:space="preserve">
+    <value>No photos</value>
+  </data>
+</root>

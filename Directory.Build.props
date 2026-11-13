@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <!-- All build output goes to artifacts\ in the repository root. Set NebulaBuildRoot to move it. -->
+    <NebulaBuildRoot Condition="'$(NebulaBuildRoot)' == ''">$(MSBuildThisFileDirectory)artifacts</NebulaBuildRoot>
+    <BaseIntermediateOutputPath>$(NebulaBuildRoot)\$(MSBuildProjectName)\obj\</BaseIntermediateOutputPath>
+    <MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
+    <BaseOutputPath>$(NebulaBuildRoot)\$(MSBuildProjectName)\bin\</BaseOutputPath>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+</Project>

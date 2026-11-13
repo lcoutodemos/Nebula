@@ -1,0 +1,45 @@
+# Words the wide list never uses as a name. Only words the source lists actually contain are kept here;
+# tools/prepare_models.py removes them when it builds the vocabulary pack.
+
+# What a photo cannot show
+beauty
+business
+color
+darkness
+education
+event
+filming
+fun
+history
+image
+love
+photo
+picture
+science
+security
+style
+technology
+tradition
+tv genre
+
+# Places: where a photo was taken comes from its coordinates, never from how it looks
+big ben
+chile
+disneyland
+eiffel tower
+empire state building
+forbidden city
+golden gate bridge
+hamburg
+manhattan
+tokyo tower
+tower bridge
+white house
+
+# Words that label people rather than say what is in the photo
+bikini
+bikini top
+blood
+boy
+death
+girl

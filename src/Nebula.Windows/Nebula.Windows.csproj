@@ -1,0 +1,102 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>Nebula_Windows</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon Condition="Exists('Assets\AppIcon.ico')">Assets\AppIcon.ico</ApplicationIcon>
+    <Platforms>x64;ARM64</Platforms>
+    <Platform Condition="'$(Platform)' == '' or '$(Platform)' == 'AnyCPU'">ARM64</Platform>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == '' and '$(Platform)' == 'ARM64'">win-arm64</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
+    <PublishProfile Condition="Exists('Properties\PublishProfiles\win-$(Platform).pubxml')">win-$(Platform).pubxml</PublishProfile>
+    <UseWinUI>true</UseWinUI>
+    <WinUISDKReferences>false</WinUISDKReferences>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\*.png" />
+    <Content Include="Assets\AppIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Manifest Include="$(ApplicationManifest)" />
+  </ItemGroup>
+
+  <!--
+    Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
+    Tools extension to be activated for this project even if the Windows App SDK Nuget
+    package has not yet been restored.
+  -->
+  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <ProjectCapability Include="Msix" />
+  </ItemGroup>
+
+  <!--
+    Microsoft.Windows.SDK.BuildTools.WinApp adds first-class support for
+    `dotnet run` on packaged WinUI apps: it hooks the .NET CLI Run target to
+    register a debug identity via the winapp CLI and launch the app with
+    package identity (AUMID).
+    Set <EnableWinAppRunSupport>false</EnableWinAppRunSupport> in a
+    <PropertyGroup> above to opt out.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2705" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools.WinUIAnalyzer" Version="0.7.1" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.5.1" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools.WinApp" Version="0.7.1" />
+  </ItemGroup>
+
+  <!--
+    Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
+    Explorer "Package and Publish" context menu entry to be enabled for this project even if
+    the Windows App SDK Nuget package has not yet been restored.
+  -->
+  <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
+  </PropertyGroup>
+
+  <!-- Publish Properties -->
+  <PropertyGroup>
+    <PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
+    <PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
+    <PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
+    <PublishTrimmed Condition="'$(Configuration)' != 'Debug'">False</PublishTrimmed>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Nebula.Core\Nebula.Core.csproj" />
+    <ProjectReference Include="..\Nebula.Embed\Nebula.Embed.csproj" />
+    <!-- In the app, ONNX Runtime + DirectML come from Windows ML (Windows App SDK). The standalone
+         Nebula.Embed.Cli keeps its own copy; the app must not package a second onnxruntime.dll. -->
+    <PackageReference Include="Microsoft.ML.OnnxRuntime.DirectML" Version="1.24.4" ExcludeAssets="runtime;native;build;buildTransitive" />
+    <Content Include="$(NebulaBuildRoot)\Native\$(Platform)\$(Configuration)\NebulaRender.dll" Link="NebulaRender.dll" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\LICENSE" Link="LICENSE" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Nebula.Render\vendor\bc7enc\LICENSE" Link="LICENSE-bc7enc.txt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <!-- The C++ renderer (src\Nebula.Render) is built by its build.ps1 with the matching MSVC toolset.
+       It runs after restore (it needs the WinUI interop header) and only when its sources are newer
+       than the DLL, so F5 in Visual Studio and `dotnet build` both work from a clean checkout.
+       Set NebulaSkipNativeBuild=true to use a renderer you built yourself. -->
+  <ItemGroup>
+    <NebulaRenderSource Include="..\Nebula.Render\**\*.cpp;..\Nebula.Render\**\*.h;..\Nebula.Render\build.ps1;packages.lock.json" />
+  </ItemGroup>
+  <Target Name="NebulaBuildNativeRenderer" BeforeTargets="BeforeBuild"
+          Condition="'$(NebulaSkipNativeBuild)' != 'true' and '$(DesignTimeBuild)' != 'true'"
+          Inputs="@(NebulaRenderSource)" Outputs="$(NebulaBuildRoot)\Native\$(Platform)\$(Configuration)\NebulaRender.dll">
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)..\Nebula.Render\build.ps1&quot; -Architecture $(Platform) -Configuration $(Configuration) -OutputDirectory &quot;$(NebulaBuildRoot)\Native\$(Platform)\$(Configuration)&quot;" />
+  </Target>
+  <!-- Windows ML (Windows App SDK) owns onnxruntime.dll/DirectML.dll in the package; drop the copies
+       that arrive through Nebula.Embed's standalone ONNX Runtime reference. -->
+  <Target Name="NebulaUseWindowsMLOnnxRuntime" AfterTargets="GetPackagingOutputs" BeforeTargets="_ComputeAppxPackagePayload">
+    <ItemGroup>
+      <PackagingOutputs Remove="@(PackagingOutputs)" Condition="$([System.String]::Copy('%(PackagingOutputs.FullPath)').ToLowerInvariant().Contains('microsoft.ml.onnxruntime.directml'))" />
+    </ItemGroup>
+  </Target>
+</Project>

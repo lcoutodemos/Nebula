@@ -1,0 +1,10 @@
+<Window
+    x:Class="Nebula_Windows.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Nebula">
+    <!-- The page owns the whole window: canvas full bleed, its toolbar row is the caption strip. -->
+    <Grid Background="{ThemeResource CanvasGroundBrush}">
+        <Frame x:Name="RootFrame"/>
+    </Grid>
+</Window>

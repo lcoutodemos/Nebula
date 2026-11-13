@@ -1,0 +1,29 @@
+# Kinds of picture the core vocabulary lacks. Together with bank.txt this is the core list.
+
+3D render
+app interface screenshot
+bottle label
+cardboard box
+chat conversation screenshot
+code on a screen
+door
+electronics
+graphic design poster
+group photo of friends
+handwriting
+kitchen appliance
+notebook
+packaging
+pencil sketch
+photo of a document
+product on a white background
+restaurant table
+selfie
+shop shelves
+social media post screenshot
+staircase
+sunset over the sea
+swimming in the sea
+video frame
+web page screenshot
+wristwatch

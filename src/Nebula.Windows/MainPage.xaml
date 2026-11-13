@@ -1,0 +1,600 @@
+﻿<Page
+    x:Class="Nebula_Windows.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Nebula_Windows"
+    xmlns:core="using:Nebula.Core"
+    xmlns:vm="using:Nebula_Windows.ViewModels"
+    KeyboardAcceleratorPlacementMode="Hidden">
+    <Grid x:Name="Root" KeyboardAcceleratorPlacementMode="Hidden" Loaded="OnLoaded" Unloaded="OnUnloaded" SizeChanged="OnPageSizeChanged"
+          Background="{ThemeResource CanvasGroundBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="SurfaceStates">
+                <VisualState x:Name="Opaque"/>
+                <VisualState x:Name="Glass">
+                    <VisualState.Setters>
+                        <Setter Target="SourcePanel.Background" Value="{ThemeResource PanelVeilBrush}"/>
+                        <Setter Target="ExplorePanel.Background" Value="{ThemeResource PanelVeilBrush}"/>
+                        <Setter Target="Inspector.Background" Value="{ThemeResource PanelVeilBrush}"/>
+                        <Setter Target="SearchChrome.Background" Value="{ThemeResource PanelVeilBrush}"/>
+                        <Setter Target="CommandChrome.Background" Value="{ThemeResource PanelVeilBrush}"/>
+                        <Setter Target="ToolsChrome.Background" Value="{ThemeResource PanelVeilBrush}"/>
+                        <Setter Target="FloatToggle.Background" Value="{ThemeResource PanelVeilBrush}"/>
+                        <Setter Target="ImportPanel.Background" Value="{ThemeResource PanelVeilBrush}"/>
+                        <Setter Target="FilterChip.Background" Value="{ThemeResource PanelVeilBrush}"/>
+                        <Setter Target="SourcePanel.BorderThickness" Value="0"/>
+                        <Setter Target="ExplorePanel.BorderThickness" Value="0"/>
+                        <Setter Target="Inspector.BorderThickness" Value="0"/>
+                        <Setter Target="SearchChrome.BorderThickness" Value="0"/>
+                        <Setter Target="CommandChrome.BorderThickness" Value="0"/>
+                        <Setter Target="ToolsChrome.BorderThickness" Value="0"/>
+                        <Setter Target="FloatToggle.BorderThickness" Value="0"/>
+                        <Setter Target="ImportPanel.BorderThickness" Value="0"/>
+                        <Setter Target="FilterChip.BorderThickness" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.KeyboardAccelerators>
+            <KeyboardAccelerator Key="F" Modifiers="Control" Invoked="OnFindAccelerator"/>
+            <KeyboardAccelerator Key="O" Modifiers="Control" Invoked="OnOpenAccelerator"/>
+            <KeyboardAccelerator Key="Escape" Invoked="OnEscapeAccelerator"/>
+            <KeyboardAccelerator Key="Home" Invoked="OnFitAccelerator"/>
+            <KeyboardAccelerator Key="Left" Modifiers="Menu" Invoked="OnBackAccelerator"/>
+            <KeyboardAccelerator Key="S" Modifiers="Control,Menu" Invoked="OnSidebarAccelerator"/>
+        </Grid.KeyboardAccelerators>
+
+        <!-- The canvas is the window content; everything else floats above it. -->
+        <ContentControl x:Name="CanvasHost" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                        IsTabStop="True" KeyDown="OnCanvasKeyDown" UseSystemFocusVisuals="False"
+                        AutomationProperties.AutomationId="PhotoCloud"
+                        x:Uid="PhotoCanvas">
+            <SwapChainPanel x:Name="Canvas"
+                            SizeChanged="OnCanvasSizeChanged" CompositionScaleChanged="OnCompositionScaleChanged"
+                            PointerPressed="OnPointerPressed" PointerMoved="OnPointerMoved" PointerReleased="OnPointerReleased"
+                            PointerExited="OnPointerExited" PointerCaptureLost="OnPointerCaptureLost"
+                            PointerWheelChanged="OnPointerWheel" DoubleTapped="OnCanvasDoubleTapped" Tapped="OnCanvasTapped"
+                            ManipulationMode="TranslateX,TranslateY,Scale" ManipulationDelta="OnManipulationDelta"/>
+        </ContentControl>
+
+        <!-- Window caption strip: drag region behind the toolbar (interactive capsules are passthrough). -->
+        <Border x:Name="TitleDragRegion" Height="48" VerticalAlignment="Top" Background="Transparent"/>
+
+        <!-- Hover tag: a small capsule following the pointer. Not interactive. -->
+        <Border x:Name="HoverTag" HorizontalAlignment="Left" VerticalAlignment="Top" Height="26" Padding="12,0"
+                CornerRadius="13" Background="{ThemeResource HoverTagBrush}" BorderBrush="{ThemeResource HoverTagRimBrush}"
+                BorderThickness="1" IsHitTestVisible="False" Opacity="0" MaxWidth="360">
+            <Border.OpacityTransition><ScalarTransition Duration="0:0:0.12"/></Border.OpacityTransition>
+            <TextBlock x:Name="HoverTagText" FontSize="12" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+        </Border>
+
+        <!-- Toolbar row: library identity · search (centred on the window) · how to arrange. -->
+        <Grid x:Name="Toolbar" VerticalAlignment="Top" Height="52" Padding="0,8,0,8">
+            <StackPanel x:Name="ToolbarIdentity" HorizontalAlignment="Left" VerticalAlignment="Center" Spacing="1"
+                        Margin="286,0,0,0" MaxWidth="220" IsHitTestVisible="False">
+                <TextBlock Text="{x:Bind ViewModel.LibraryName, Mode=OneWay}" FontSize="15" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                <TextBlock Text="{x:Bind ViewModel.Status, Mode=OneWay}" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           TextTrimming="CharacterEllipsis" AutomationProperties.AutomationId="LibraryStatus"
+                           AutomationProperties.LiveSetting="Polite"/>
+            </StackPanel>
+
+            <Border x:Name="SearchChrome" Style="{StaticResource GlassPanelStyle}" Height="36" Width="440"
+                    HorizontalAlignment="Left" SizeChanged="OnGlassSizeChanged" PointerEntered="OnPanelPointerEntered">
+                <Grid>
+                    <Grid ColumnSpacing="4" Padding="14,0,4,0">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <FontIcon Glyph="&#xE721;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                        <TextBox x:Name="Search" Grid.Column="1" Style="{StaticResource SearchFieldStyle}" x:Uid="SearchBox"
+                                 TextChanged="OnSearchChanged" KeyDown="OnSearchKeyDown" GotFocus="OnSearchFocus" LostFocus="OnSearchFocus"
+                                 Loaded="OnSearchLoaded"
+                                 AutomationProperties.AutomationId="SearchBox">
+                            <TextBox.Resources>
+                                <SolidColorBrush x:Key="TextControlBackground" Color="Transparent"/>
+                                <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="Transparent"/>
+                                <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="Transparent"/>
+                                <SolidColorBrush x:Key="TextControlBackgroundDisabled" Color="Transparent"/>
+                                <SolidColorBrush x:Key="TextControlBorderBrush" Color="Transparent"/>
+                                <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="Transparent"/>
+                                <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="Transparent"/>
+                                <Thickness x:Key="TextControlBorderThemeThickness">0</Thickness>
+                                <Thickness x:Key="TextControlBorderThemeThicknessFocused">0</Thickness>
+                            </TextBox.Resources>
+                        </TextBox>
+                        <Button x:Name="ClearSearch" Grid.Column="2" Click="OnClearSearch" Visibility="Collapsed"
+                                Style="{StaticResource SubtleButtonStyle}" Width="28" Height="28" Padding="0" CornerRadius="14"
+                                AutomationProperties.AutomationId="ClearSearch" x:Uid="ClearSearchButton">
+                            <FontIcon Glyph="&#xE711;" FontSize="10"/>
+                        </Button>
+                    </Grid>
+                    <Border x:Name="SearchFocusRim" CornerRadius="18" BorderThickness="1" BorderBrush="{ThemeResource FocusRimBrush}"
+                            Opacity="0" IsHitTestVisible="False">
+                        <Border.OpacityTransition><ScalarTransition Duration="0:0:0.15"/></Border.OpacityTransition>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <StackPanel x:Name="TrailingTools" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,0,146,0">
+                <!-- Arrange: one capsule, concentric sliding selection pill, hairline separators. -->
+                <Border x:Name="CommandChrome" Style="{StaticResource GlassPanelStyle}" Height="36" Padding="3"
+                        SizeChanged="OnGlassSizeChanged" PointerEntered="OnPanelPointerEntered">
+                    <Grid>
+                        <Grid x:Name="SegmentHost" AutomationProperties.AutomationId="Arrangements" x:Uid="ArrangementSegments"
+                              SizeChanged="OnSegmentHostSizeChanged"
+                              IsHitTestVisible="{x:Bind ViewModel.HasLibrary, Mode=OneWay}">
+                            <Border x:Name="SegmentPill" HorizontalAlignment="Left" Width="0" Height="30" CornerRadius="15"
+                                    Background="{ThemeResource SegmentPillBrush}" IsHitTestVisible="False">
+                                <Border.RenderTransform><TranslateTransform x:Name="SegmentPillOffset"/></Border.RenderTransform>
+                            </Border>
+                            <StackPanel x:Name="Modes" Orientation="Horizontal" XYFocusKeyboardNavigation="Enabled" TabFocusNavigation="Once">
+                                <RadioButton x:Name="ModeCloud" x:Uid="ModeCloud" Tag="Cloud" GroupName="Arrangement" IsChecked="True"
+                                             Style="{StaticResource SegmentStyle}" Checked="OnModeChecked"
+                                             AutomationProperties.AutomationId="ModeCloud"/>
+                                <Rectangle x:Name="Sep0" Width="1" Height="14" Fill="{ThemeResource HairlineBrush}" VerticalAlignment="Center"/>
+                                <RadioButton x:Name="ModeSimilarity" x:Uid="ModeSimilarity" GroupName="Arrangement" IsEnabled="False" Tag="Similarity" Checked="OnModeChecked"
+                                             Style="{StaticResource SegmentStyle}" AutomationProperties.AutomationId="ModeSimilarity"/>
+                                <Rectangle x:Name="Sep1" Width="1" Height="14" Fill="{ThemeResource HairlineBrush}" VerticalAlignment="Center"/>
+                                <RadioButton x:Name="ModeTime" x:Uid="ModeTime" Tag="Time" GroupName="Arrangement"
+                                             Style="{StaticResource SegmentStyle}" Checked="OnModeChecked"
+                                             AutomationProperties.AutomationId="ModeTime"/>
+                                <Rectangle x:Name="Sep2" Width="1" Height="14" Fill="{ThemeResource HairlineBrush}" VerticalAlignment="Center"/>
+                                <RadioButton x:Name="ModeColour" x:Uid="ModeColour" Tag="Colour" GroupName="Arrangement"
+                                             Style="{StaticResource SegmentStyle}" Checked="OnModeChecked"
+                                             AutomationProperties.AutomationId="ModeColour"/>
+                                <Rectangle x:Name="Sep3" Width="1" Height="14" Fill="{ThemeResource HairlineBrush}" VerticalAlignment="Center"/>
+                                <RadioButton x:Name="ModeGrid" x:Uid="ModeGrid" Tag="Grid" GroupName="Arrangement"
+                                             Style="{StaticResource SegmentStyle}" Checked="OnModeChecked"
+                                             AutomationProperties.AutomationId="ModeGrid"/>
+                            </StackPanel>
+                        </Grid>
+                        <!-- Narrow windows: the same choice as a pop-up, still inside the capsule. -->
+                        <Button x:Name="CompactArrange" Visibility="Collapsed" Style="{StaticResource SubtleButtonStyle}" Height="30"
+                                CornerRadius="15" Padding="14,0,10,0" IsEnabled="{x:Bind ViewModel.HasLibrary, Mode=OneWay}" Click="OnShowArrangeMenu"
+                                AutomationProperties.AutomationId="CompactArrangements" x:Uid="CompactArrangeButton">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock x:Name="ArrangementLabel" Text="Cloud" FontSize="13" VerticalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE70D;" FontSize="9" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                            <FlyoutBase.AttachedFlyout>
+                                <MenuFlyout x:Name="ArrangeMenu" MenuFlyoutPresenterStyle="{StaticResource GlassMenuPresenterStyle}" AreOpenCloseAnimationsEnabled="False" Opened="OnMenuOpened">
+                                    <MenuFlyout.SystemBackdrop><DesktopAcrylicBackdrop/></MenuFlyout.SystemBackdrop>
+                                    <ToggleMenuFlyoutItem x:Name="MenuCloud" x:Uid="MenuCloud" Tag="Cloud" IsChecked="True" Click="OnArrangeMenu" AutomationProperties.AutomationId="MenuCloud"/>
+                                    <ToggleMenuFlyoutItem x:Name="MenuSimilarity" x:Uid="MenuSimilarity" Tag="Similarity" IsEnabled="False" Click="OnArrangeMenu" AutomationProperties.AutomationId="MenuSimilarity"/>
+                                    <ToggleMenuFlyoutItem x:Name="MenuTime" x:Uid="MenuTime" Tag="Time" Click="OnArrangeMenu" AutomationProperties.AutomationId="MenuTime"/>
+                                    <ToggleMenuFlyoutItem x:Name="MenuColour" x:Uid="MenuColour" Tag="Colour" Click="OnArrangeMenu" AutomationProperties.AutomationId="MenuColour"/>
+                                    <ToggleMenuFlyoutItem x:Name="MenuGrid" x:Uid="MenuGrid" Tag="Grid" Click="OnArrangeMenu" AutomationProperties.AutomationId="MenuGrid"/>
+                                </MenuFlyout>
+                            </FlyoutBase.AttachedFlyout>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <!-- Pixels · Fit · Back · More: one quiet capsule of icon buttons. -->
+                <Border x:Name="ToolsChrome" Style="{StaticResource GlassPanelStyle}" Height="36" Padding="3"
+                        SizeChanged="OnGlassSizeChanged" PointerEntered="OnPanelPointerEntered">
+                    <StackPanel Orientation="Horizontal" Spacing="0">
+                        <Button x:Name="PixelsButton" Style="{StaticResource IconCapsuleStyle}" Width="46" Click="OnShowPixelsMenu"
+                                IsEnabled="{x:Bind ViewModel.HasLibrary, Mode=OneWay}"
+                                AutomationProperties.AutomationId="Pixels" x:Uid="PixelsButton">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <FontIcon x:Name="PixelsIcon" Glyph="&#xF0E2;" FontSize="15"/>
+                                <FontIcon Glyph="&#xE70D;" FontSize="8" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                            <FlyoutBase.AttachedFlyout>
+                                <MenuFlyout x:Name="PixelsMenu" MenuFlyoutPresenterStyle="{StaticResource GlassMenuPresenterStyle}" AreOpenCloseAnimationsEnabled="False" Opened="OnMenuOpened">
+                                    <MenuFlyout.SystemBackdrop><DesktopAcrylicBackdrop/></MenuFlyout.SystemBackdrop>
+                                    <ToggleMenuFlyoutItem x:Uid="PixelsPhotos" Tag="0" IsChecked="True" Click="OnPixels" AutomationProperties.AutomationId="PixelsPhoto"/>
+                                    <MenuFlyoutSeparator/>
+                                    <ToggleMenuFlyoutItem x:Uid="Pixels128" Tag="5" Click="OnPixels" AutomationProperties.AutomationId="Pixels128"/>
+                                    <ToggleMenuFlyoutItem x:Uid="Pixels64" Tag="4" Click="OnPixels" AutomationProperties.AutomationId="Pixels64"/>
+                                    <ToggleMenuFlyoutItem x:Uid="Pixels16" Tag="3" Click="OnPixels" AutomationProperties.AutomationId="Pixels16"/>
+                                    <ToggleMenuFlyoutItem x:Uid="Pixels4" Tag="2" Click="OnPixels" AutomationProperties.AutomationId="Pixels4"/>
+                                    <ToggleMenuFlyoutItem x:Uid="Pixels1" Tag="1" Click="OnPixels" AutomationProperties.AutomationId="Pixels1"/>
+                                </MenuFlyout>
+                            </FlyoutBase.AttachedFlyout>
+                        </Button>
+                        <Rectangle Width="1" Height="14" Margin="3,0" Fill="{ThemeResource HairlineBrush}" VerticalAlignment="Center"/>
+                        <Button Click="OnFit" Style="{StaticResource IconCapsuleStyle}" IsEnabled="{x:Bind ViewModel.HasLibrary, Mode=OneWay}"
+                                AutomationProperties.AutomationId="FitCollection" x:Uid="FitButton">
+                            <FontIcon Glyph="&#xE740;" FontSize="14"/>
+                        </Button>
+                        <Button Click="OnBack" Style="{StaticResource IconCapsuleStyle}" IsEnabled="{x:Bind ViewModel.HasLibrary, Mode=OneWay}"
+                                AutomationProperties.AutomationId="BackView" x:Uid="BackButton">
+                            <FontIcon Glyph="&#xE7A7;" FontSize="14"/>
+                        </Button>
+                        <Button x:Name="MoreButton" Style="{StaticResource IconCapsuleStyle}" Click="OnShowMoreMenu" AutomationProperties.AutomationId="MoreOptions"
+                                x:Uid="MoreButton">
+                            <FontIcon Glyph="&#xE712;" FontSize="14"/>
+                            <FlyoutBase.AttachedFlyout>
+                                <MenuFlyout x:Name="MoreMenu" MenuFlyoutPresenterStyle="{StaticResource GlassMenuPresenterStyle}" AreOpenCloseAnimationsEnabled="False" Opened="OnMenuOpened">
+                                    <MenuFlyout.SystemBackdrop><DesktopAcrylicBackdrop/></MenuFlyout.SystemBackdrop>
+                                    <MenuFlyoutItem x:Uid="AddFolderMenuItem" Click="OnOpenFolder" IsEnabled="{x:Bind local:MainPage.Not(ViewModel.IsImporting), Mode=OneWay}" AutomationProperties.AutomationId="OpenFolderMenu">
+                                        <MenuFlyoutItem.KeyboardAccelerators><KeyboardAccelerator Key="O" Modifiers="Control" IsEnabled="False"/></MenuFlyoutItem.KeyboardAccelerators>
+                                    </MenuFlyoutItem>
+                                    <MenuFlyoutItem x:Uid="RescanMenuItem" Click="OnRescan"
+                                                    IsEnabled="{x:Bind local:MainPage.CanRescan(ViewModel.HasLibrary, ViewModel.IsImporting), Mode=OneWay}" AutomationProperties.AutomationId="RescanSource"/>
+                                    <MenuFlyoutSeparator/>
+                                    <MenuFlyoutItem Text="Show sidebar" x:Name="SidebarMenuItem" Click="OnToggleSidebar" AutomationProperties.AutomationId="ToggleSidebarMenu">
+                                        <MenuFlyoutItem.KeyboardAccelerators><KeyboardAccelerator Key="S" Modifiers="Control,Menu" IsEnabled="False"/></MenuFlyoutItem.KeyboardAccelerators>
+                                    </MenuFlyoutItem>
+                                    <MenuFlyoutSubItem x:Uid="AppearanceMenu" AutomationProperties.AutomationId="AppearanceMenu">
+                                        <ToggleMenuFlyoutItem x:Name="SystemAppearance" x:Uid="AppearanceSystemItem" Tag="System" Click="OnAppearance" AutomationProperties.AutomationId="AppearanceSystem"/>
+                                        <ToggleMenuFlyoutItem x:Name="LightAppearance" x:Uid="AppearanceLightItem" Tag="Light" Click="OnAppearance" AutomationProperties.AutomationId="AppearanceLight"/>
+                                        <ToggleMenuFlyoutItem x:Name="DarkAppearance" x:Uid="AppearanceDarkItem" Tag="Dark" Click="OnAppearance" AutomationProperties.AutomationId="AppearanceDark"/>
+                                    </MenuFlyoutSubItem>
+                                    <MenuFlyoutSeparator/>
+                                    <MenuFlyoutItem x:Uid="ControlsMenuItem" Click="OnControls" AutomationProperties.AutomationId="ControlsHelp"/>
+                                    <MenuFlyoutItem x:Uid="ImportDetailsMenuItem" Click="OnImportDetails" AutomationProperties.AutomationId="ImportDetails"/>
+                                    <MenuFlyoutItem x:Uid="AboutMenuItem" Click="OnAbout" AutomationProperties.AutomationId="About"/>
+                                </MenuFlyout>
+                            </FlyoutBase.AttachedFlyout>
+                        </Button>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <!-- What the search understood / the active filter: a removable chip under the search capsule. -->
+        <Border x:Name="FilterChip" Style="{StaticResource GlassPanelStyle}" Height="30" CornerRadius="15"
+                HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,56,0,0" Visibility="Collapsed" Padding="12,0,3,0"
+                SizeChanged="OnGlassSizeChanged" PointerEntered="OnPanelPointerEntered">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Text="{x:Bind ViewModel.FilterLabel, Mode=OneWay}" FontSize="12" VerticalAlignment="Center" MaxWidth="320" TextTrimming="CharacterEllipsis"/>
+                <Button Click="OnClearFilter" Style="{StaticResource SubtleButtonStyle}" Width="24" Height="24" Padding="0" CornerRadius="12"
+                        AutomationProperties.AutomationId="ClearSelectedFilter" x:Uid="ClearFilterButton">
+                    <FontIcon Glyph="&#xE711;" FontSize="9"/>
+                </Button>
+            </StackPanel>
+        </Border>
+
+        <!-- Shown only while the sidebar is collapsed: the toggle glides to the window corner. -->
+        <Border x:Name="FloatToggle" Style="{StaticResource GlassPanelStyle}" Width="40" Height="36" Padding="3"
+                HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,8,0,0" Visibility="Collapsed"
+                SizeChanged="OnGlassSizeChanged" PointerEntered="OnPanelPointerEntered">
+            <Button Click="OnToggleSidebar" Style="{StaticResource IconCapsuleStyle}" Width="34"
+                    AutomationProperties.AutomationId="ShowSidebar" x:Uid="ShowSidebarButton">
+                <FontIcon Glyph="&#xE90C;" FontSize="15"/>
+            </Button>
+        </Border>
+
+        <!-- ===================== LEFT COLUMN: sidebar · explore · photo ===================== -->
+        <Border x:Name="SourcePanel" Width="256" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,8,0,0"
+                Style="{StaticResource GlassPanelStyle}" Padding="8,4,8,12"
+                SizeChanged="OnGlassSizeChanged" PointerEntered="OnPanelPointerEntered">
+            <ContentControl IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
+                <StackPanel>
+                    <Grid Height="40">
+                        <StackPanel Orientation="Horizontal" Spacing="8" Margin="8,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
+                            <Image Source="ms-appx:///Assets/Square44x44Logo.targetsize-40.png" Width="18" Height="18"/>
+                            <TextBlock x:Uid="SidebarAppName" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <Button x:Name="SidebarToggle" Click="OnToggleSidebar" Style="{StaticResource IconCapsuleStyle}" HorizontalAlignment="Right"
+                                Width="32" Height="32" CornerRadius="12"
+                                AutomationProperties.AutomationId="ToggleSidebar" x:Uid="HideSidebarButton">
+                            <FontIcon Glyph="&#xE90C;" FontSize="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </Button>
+                    </Grid>
+                    <TextBlock x:Uid="LibraryHeader" Style="{StaticResource SectionHeaderStyle}" Margin="10,8,0,4"/>
+                    <ListView x:Name="Destinations" SelectionMode="Single" SelectionChanged="OnDestinationChanged"
+                              ItemContainerStyle="{StaticResource SourceItemStyle}" IsEnabled="{x:Bind ViewModel.HasLibrary, Mode=OneWay}"
+                              ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                              AutomationProperties.AutomationId="LibraryDestinations" x:Uid="LibraryList">
+                        <ListViewItem x:Name="AllDestination" Tag="All" AutomationProperties.AutomationId="AllPhotos" x:Uid="AllPhotosItem">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <FontIcon Glyph="&#xE91B;" FontSize="16" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock x:Uid="AllPhotosLabel" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListViewItem>
+                        <ListViewItem x:Name="RecentDestination" Tag="Year" AutomationProperties.AutomationId="ThisYear" x:Uid="ThisYearItem">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <FontIcon Glyph="&#xE787;" FontSize="16" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock x:Uid="ThisYearLabel" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListViewItem>
+                        <ListViewItem x:Name="FavouritesDestination" Tag="Favourites" AutomationProperties.AutomationId="FavouritePhotos" x:Uid="FavouritesItem">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <FontIcon Glyph="&#xEB51;" FontSize="16" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock x:Uid="FavouritesLabel" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListViewItem>
+                    </ListView>
+                    <TextBlock x:Uid="SourcesHeader" Style="{StaticResource SectionHeaderStyle}" Margin="10,14,0,4"/>
+                    <Button x:Name="SourceDetails" Style="{StaticResource RowButtonStyle}" Click="OnRevealSource"
+                            Visibility="{x:Bind ViewModel.HasLibrary, Mode=OneWay}"
+                            AutomationProperties.AutomationId="RevealSource" x:Uid="RevealSourceButton">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE8B7;" FontSize="16" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock Text="{x:Bind ViewModel.LibraryName, Mode=OneWay}" TextTrimming="CharacterEllipsis" MaxWidth="180" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource RowButtonStyle}" Click="OnOpenFolder" IsEnabled="{x:Bind local:MainPage.Not(ViewModel.IsImporting), Mode=OneWay}"
+                            AutomationProperties.AutomationId="OpenFolder" x:Uid="AddFolderButton">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE710;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Margin="1,0"/>
+                            <TextBlock x:Uid="AddFolderLabel" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </ContentControl>
+        </Border>
+
+        <Border x:Name="ExplorePanel" Width="256" Height="340" HorizontalAlignment="Left" VerticalAlignment="Top"
+                Margin="10,300,0,0" Padding="8,12,8,8" Style="{StaticResource GlassPanelStyle}" Visibility="Collapsed"
+                SizeChanged="OnGlassSizeChanged" PointerEntered="OnPanelPointerEntered">
+            <ContentControl IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                <Grid RowSpacing="10">
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                    <Grid ColumnSpacing="2" Margin="0,0,0,0">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <Button x:Name="ExploreBack" Click="OnExploreBack" Style="{StaticResource IconCapsuleStyle}" Width="28" Height="28" CornerRadius="10"
+                                VerticalAlignment="Top" Visibility="Collapsed" Margin="0,0,2,0"
+                                AutomationProperties.AutomationId="ExploreBack" x:Uid="ExploreBackButton">
+                            <FontIcon Glyph="&#xE76B;" FontSize="11"/>
+                        </Button>
+                        <StackPanel Grid.Column="1" Spacing="2" Margin="8,0,0,0">
+                            <TextBlock Text="{x:Bind ViewModel.ExploreTitle, Mode=OneWay}" Style="{StaticResource PanelTitleStyle}" TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Text="{x:Bind ViewModel.ExploreDescription, Mode=OneWay}" Style="{StaticResource CaptionStyle}" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                        <Button x:Name="ExpandExplore" Grid.Column="2" Click="OnExpandExplore" Style="{StaticResource IconCapsuleStyle}" Width="28" Height="28" CornerRadius="10"
+                                VerticalAlignment="Top" AutomationProperties.AutomationId="ExpandExplore"
+                                x:Uid="ExpandExploreButton">
+                            <FontIcon x:Name="ExploreExpandIcon" Glyph="&#xE740;" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </Button>
+                    </Grid>
+
+                    <!-- "Did you know": one measured fact at a time, every number leads to its photos. -->
+                    <Border x:Name="FactCard" Grid.Row="1" CornerRadius="10" Padding="12,10,12,12" Background="{ThemeResource InsetFillBrush}"
+                            BorderBrush="{ThemeResource InsetStrokeBrush}" BorderThickness="1" Visibility="Collapsed">
+                        <StackPanel Spacing="4">
+                            <StackPanel Orientation="Horizontal" Spacing="7">
+                                <FontIcon x:Name="FactIcon" Glyph="&#xE8B7;" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock x:Name="FactCaption" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                            <TextBlock x:Name="FactValue" FontSize="24" FontWeight="SemiBold" Margin="0,2,0,0"/>
+                            <TextBlock x:Name="FactBody" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"/>
+                            <StackPanel x:Name="FactThumbs" Orientation="Horizontal" Spacing="5" Margin="0,6,0,4"/>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <Button Click="OnFactShow" Style="{StaticResource PrimaryCapsuleStyle}" MinHeight="28" Padding="12,4"
+                                        AutomationProperties.AutomationId="FactShowPhotos">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <FontIcon Glyph="&#xE81E;" FontSize="12"/><TextBlock x:Uid="FactShowPhotosLabel" FontSize="12"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Grid.Column="2" Click="OnFactNext" Style="{StaticResource QuietCapsuleStyle}" MinHeight="28" Padding="12,4"
+                                        AutomationProperties.AutomationId="FactNext">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <FontIcon Glyph="&#xE72A;" FontSize="11"/><TextBlock x:Uid="FactNextLabel" FontSize="12"/>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock x:Name="ListEyebrow" Grid.Row="2" Style="{StaticResource EyebrowStyle}" Margin="8,4,0,-4"/>
+
+                    <Grid Grid.Row="3">
+                        <ListView x:Name="Facets" ItemsSource="{x:Bind ViewModel.Facets, Mode=OneWay}" IsItemClickEnabled="True"
+                                  ItemClick="OnFacetClick" SelectionMode="None" ItemContainerStyle="{StaticResource ExploreItemStyle}"
+                                  ContainerContentChanging="OnFacetContainerChanging" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  x:Uid="FacetsList" AutomationProperties.AutomationId="DepartmentList">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="vm:ExploreFacet">
+                                    <Grid ColumnSpacing="10">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                        <Border Width="34" Height="34" CornerRadius="7" Background="{ThemeResource ThumbPlaceholderBrush}">
+                                            <Border CornerRadius="7">
+                                                <Border.Background><ImageBrush ImageSource="{x:Bind local:MainPage.Thumb(Thumbnail), Mode=OneTime}" Stretch="UniformToFill"/></Border.Background>
+                                            </Border>
+                                        </Border>
+                                        <Grid Grid.Column="1" VerticalAlignment="Center" RowSpacing="6" ColumnSpacing="8">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="3"/></Grid.RowDefinitions>
+                                            <TextBlock Text="{x:Bind Name, Mode=OneTime}" FontSize="13" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Grid.Column="1" Text="{x:Bind CountText, Mode=OneTime}" FontSize="12" Margin="0,0,2,0"
+                                                       VerticalAlignment="Bottom" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            <Border Grid.Row="1" Grid.ColumnSpan="2" CornerRadius="1.5" Background="{ThemeResource BarTrackBrush}"/>
+                                            <Border Grid.Row="1" Grid.ColumnSpan="2" CornerRadius="1.5" Background="{ThemeResource BarFillBrush}" RenderTransformOrigin="0,0.5">
+                                                <Border.RenderTransform><ScaleTransform ScaleX="{x:Bind Fraction, Mode=OneTime}"/></Border.RenderTransform>
+                                            </Border>
+                                        </Grid>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <ListView x:Name="Results" ItemsSource="{x:Bind ViewModel.Results, Mode=OneWay}" Visibility="Collapsed"
+                                  SelectionChanged="OnResultSelected" IsItemClickEnabled="True" ItemClick="OnResultClick"
+                                  DoubleTapped="OnResultDoubleTapped" KeyDown="OnResultsKeyDown"
+                                  ContainerContentChanging="OnResultContainerChanging" ItemContainerStyle="{StaticResource ExploreItemStyle}"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  x:Uid="ResultsList" AutomationProperties.AutomationId="ResultsList">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="core:Photo">
+                                    <Grid ColumnSpacing="10">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                        <Border Width="34" Height="34" CornerRadius="7" Background="{ThemeResource ThumbPlaceholderBrush}">
+                                            <Border CornerRadius="7">
+                                                <Border.Background><ImageBrush ImageSource="{x:Bind local:MainPage.Thumb(ThumbnailPath), Mode=OneTime}" Stretch="UniformToFill"/></Border.Background>
+                                            </Border>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                            <TextBlock Text="{x:Bind Title, Mode=OneTime}" FontSize="13" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{x:Bind Attribution, Mode=OneTime}" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <TextBlock x:Name="NoFacets" x:Uid="NoFacetsText" Visibility="Collapsed"
+                                   Style="{StaticResource CaptionStyle}" TextWrapping="Wrap" Margin="8"/>
+                        <TextBlock x:Name="NoResults" x:Uid="NoResultsText"
+                                   Visibility="Collapsed" Style="{StaticResource CaptionStyle}" TextWrapping="Wrap" Margin="8"/>
+                    </Grid>
+
+                    <!-- Similarity: nearest photos when one is selected, a live map
+                         of the categories that follows the camera, the categories, and the pinned one's detail.
+                         Hover previews a set on the canvas; click pins it. Monochrome: the only colour is the photos'. -->
+                    <ScrollViewer x:Name="SimilarityView" Grid.Row="1" Grid.RowSpan="3" Visibility="Collapsed"
+                                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,0,4"
+                                  AutomationProperties.AutomationId="VisualGroups" x:Uid="SimilarityPanel">
+                        <StackPanel Spacing="6" Margin="0,0,0,4">
+                            <StackPanel x:Name="NearestSection" Spacing="6" Visibility="Collapsed">
+                                <TextBlock x:Uid="NearestHeader" Style="{StaticResource EyebrowStyle}" Margin="8,2,0,0"/>
+                                <Grid x:Name="NearestGrid" ColumnSpacing="5" RowSpacing="12" Margin="8,0,8,0"/>
+                                <TextBlock x:Uid="NearestNote" Style="{StaticResource NoteStyle}" Margin="8,0,8,4"/>
+                            </StackPanel>
+                            <Border x:Name="GroupMapFrame" Height="124" Margin="8,0,8,0" CornerRadius="10"
+                                    Background="{ThemeResource InsetFillBrush}" BorderBrush="{ThemeResource InsetStrokeBrush}" BorderThickness="1"
+                                    AutomationProperties.AutomationId="GroupMap" x:Uid="GroupMapFrame">
+                                <Canvas x:Name="GroupMap" Background="Transparent" PointerMoved="OnGroupMapPointerMoved"
+                                        PointerExited="OnGroupMapPointerExited" Tapped="OnGroupMapTapped" SizeChanged="OnGroupMapSizeChanged"/>
+                            </Border>
+                            <TextBlock x:Uid="GroupMapNote" Style="{StaticResource NoteStyle}" Margin="8,0,8,0"/>
+                            <TextBlock x:Uid="CategoriesHeader" Style="{StaticResource EyebrowStyle}" Margin="8,8,0,0"/>
+                            <StackPanel x:Name="CategoryRows" Spacing="2"/>
+                            <TextBlock x:Name="MoreCategories" Style="{StaticResource NoteStyle}" Margin="8,2,8,0" Visibility="Collapsed"/>
+                            <StackPanel x:Name="DrillSection" Spacing="6" Visibility="Collapsed" Margin="0,6,0,0">
+                                <Rectangle Height="1" Fill="{ThemeResource HairlineBrush}" Margin="8,0,8,4"/>
+                                <TextBlock x:Name="DrillTitle" Style="{StaticResource EyebrowStyle}" Margin="8,0,8,0" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock x:Name="DrillSummary" Style="{StaticResource CaptionStyle}" TextWrapping="Wrap" Margin="8,0,8,2"/>
+                                <StackPanel Orientation="Horizontal" Spacing="6" Margin="8,2,8,0">
+                                    <Button Click="OnDrillShow" Style="{StaticResource PrimaryCapsuleStyle}" MinHeight="28" Padding="12,4"
+                                            AutomationProperties.AutomationId="GroupShowPhotos">
+                                        <StackPanel Orientation="Horizontal" Spacing="6"><FontIcon Glyph="&#xE81E;" FontSize="12"/><TextBlock x:Uid="GroupShowPhotosLabel" FontSize="12"/></StackPanel>
+                                    </Button>
+                                    <Button Click="OnDrillFocus" Style="{StaticResource QuietCapsuleStyle}" MinHeight="28" Padding="12,4"
+                                            AutomationProperties.AutomationId="GroupFocus">
+                                        <StackPanel Orientation="Horizontal" Spacing="6"><FontIcon Glyph="&#xE71E;" FontSize="11"/><TextBlock x:Uid="GroupFocusLabel" FontSize="12"/></StackPanel>
+                                    </Button>
+                                    <Button Click="OnDrillClear" Style="{StaticResource QuietCapsuleStyle}" MinHeight="28" Padding="12,4"
+                                            AutomationProperties.AutomationId="GroupClear">
+                                        <TextBlock x:Uid="GroupClearLabel" FontSize="12"/>
+                                    </Button>
+                                </StackPanel>
+                                <TextBlock x:Name="DrillLeavesTitle" x:Uid="DrillLeavesTitle" Style="{StaticResource EyebrowStyle}" Margin="8,8,0,0" Visibility="Collapsed"/>
+                                <StackPanel x:Name="DrillLeaves" Spacing="2" Visibility="Collapsed"/>
+                                <TextBlock x:Name="LinksTitle" x:Uid="LinksTitle" Style="{StaticResource EyebrowStyle}" Margin="8,8,0,0" Visibility="Collapsed"/>
+                                <StackPanel x:Name="LinkRows" Spacing="2" Visibility="Collapsed"/>
+                            </StackPanel>
+                            <StackPanel x:Name="BridgeSection" Spacing="6" Visibility="Collapsed" Margin="0,6,0,0">
+                                <TextBlock x:Uid="BridgeHeader" Style="{StaticResource EyebrowStyle}" Margin="8,0,0,0"/>
+                                <StackPanel x:Name="BridgeThumbs" Orientation="Horizontal" Spacing="5" Margin="8,0,8,0"/>
+                            </StackPanel>
+                            <TextBlock x:Name="GroupsPending" Style="{StaticResource CaptionStyle}" TextWrapping="Wrap" Margin="8,4,8,0" Visibility="Collapsed"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </ContentControl>
+        </Border>
+
+        <Border x:Name="Inspector" Width="256" Height="300" HorizontalAlignment="Left" VerticalAlignment="Top"
+                Style="{StaticResource GlassPanelStyle}" Padding="12" Visibility="Collapsed"
+                SizeChanged="OnGlassSizeChanged" PointerEntered="OnPanelPointerEntered">
+            <ContentControl IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                <Grid RowSpacing="10">
+                    <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                                  AutomationProperties.AutomationId="InspectorScroll">
+                        <StackPanel Spacing="4">
+                            <Border x:Name="PreviewFrame" CornerRadius="8" Height="150" Width="200" HorizontalAlignment="Center"
+                                    Background="{ThemeResource ThumbPlaceholderBrush}" Margin="0,2,0,8"
+                                    x:Uid="PreviewFrame">
+                                <Image x:Name="PreviewImage" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock x:Name="InspectorEmpty" x:Uid="InspectorEmpty" TextWrapping="Wrap" Style="{StaticResource CaptionStyle}"/>
+                            <TextBlock x:Name="PhotoTitle" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"
+                                       AutomationProperties.AutomationId="PhotoTitle"/>
+                            <TextBlock x:Name="PhotoArtist" FontSize="12" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Name="PhotoDetails" FontSize="12" TextWrapping="Wrap" LineHeight="18" Margin="0,6,0,0"/>
+                            <TextBlock x:Name="PhotoCredit" FontSize="11" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorTertiaryBrush}" Margin="0,4,0,0"/>
+                            <TextBlock x:Name="PreviewStatus" Visibility="Collapsed" FontSize="11" TextWrapping="Wrap"
+                                       Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                       AutomationProperties.AutomationId="PreviewStatus" AutomationProperties.LiveSetting="Polite"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                    <Grid Grid.Row="1" ColumnSpacing="6">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <Button x:Name="OpenOriginal" x:Uid="OpenOriginalButton" Click="OnOpenOriginal" IsEnabled="False"
+                                Style="{StaticResource QuietCapsuleStyle}" HorizontalAlignment="Stretch" AutomationProperties.AutomationId="OpenOriginal"/>
+                        <ToggleButton x:Name="FavouriteButton" Grid.Column="1" Click="OnFavourite" CornerRadius="15" Width="30" Height="30"
+                                      Padding="0" BorderThickness="0" Background="{ThemeResource QuietCapsuleBrush}" IsEnabled="False"
+                                      AutomationProperties.AutomationId="FavouriteSelected" x:Uid="FavouriteButton">
+                            <ToggleButton.Resources>
+                                <StaticResource x:Key="ToggleButtonBackgroundChecked" ResourceKey="QuietCapsuleHoverBrush"/>
+                                <StaticResource x:Key="ToggleButtonBackgroundCheckedPointerOver" ResourceKey="QuietCapsuleHoverBrush"/>
+                                <StaticResource x:Key="ToggleButtonBackgroundCheckedPressed" ResourceKey="QuietCapsulePressedBrush"/>
+                                <StaticResource x:Key="ToggleButtonForegroundChecked" ResourceKey="MonoInkBrush"/>
+                                <StaticResource x:Key="ToggleButtonForegroundCheckedPointerOver" ResourceKey="MonoInkBrush"/>
+                                <StaticResource x:Key="ToggleButtonForegroundCheckedPressed" ResourceKey="MonoInkBrush"/>
+                            </ToggleButton.Resources>
+                            <FontIcon x:Name="FavouriteIcon" Glyph="&#xEB51;" FontSize="13"/>
+                        </ToggleButton>
+                        <Button x:Name="FocusPhoto" Grid.Column="2" Click="OnFocusPhoto" IsEnabled="False" Style="{StaticResource QuietCapsuleStyle}"
+                                Width="30" Height="30" Padding="0" MinHeight="30"
+                                AutomationProperties.AutomationId="FocusPhoto" x:Uid="FramePhotoButton">
+                            <FontIcon Glyph="&#xE9A6;" FontSize="13"/>
+                        </Button>
+                        <Button Grid.Column="3" Click="OnCloseInspector" Style="{StaticResource QuietCapsuleStyle}"
+                                Width="30" Height="30" Padding="0" MinHeight="30"
+                                x:Uid="CloseInspectorButton" AutomationProperties.AutomationId="CloseInspector">
+                            <FontIcon Glyph="&#xE711;" FontSize="10"/>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </ContentControl>
+        </Border>
+
+        <!-- Empty: a quiet formation and two honest choices. -->
+        <Grid x:Name="EmptyState" Margin="280,60,16,40">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="420" Spacing="10">
+                <Grid Height="130" Width="260" IsHitTestVisible="False" Margin="0,0,0,8">
+                    <Ellipse Width="200" Height="64" Stroke="{ThemeResource HairlineBrush}" StrokeThickness="1" RenderTransformOrigin=".5,.5">
+                        <Ellipse.RenderTransform><RotateTransform Angle="-18"/></Ellipse.RenderTransform>
+                    </Ellipse>
+                    <Ellipse Width="128" Height="84" Stroke="{ThemeResource HairlineBrush}" StrokeThickness="1" RenderTransformOrigin=".5,.5">
+                        <Ellipse.RenderTransform><RotateTransform Angle="26"/></Ellipse.RenderTransform>
+                    </Ellipse>
+                    <FontIcon Glyph="&#xE91B;" FontSize="30" Foreground="{ThemeResource TextFillColorTertiaryBrush}"/>
+                </Grid>
+                <TextBlock x:Uid="EmptyTitle" FontSize="24" FontWeight="SemiBold" TextAlignment="Center"/>
+                <TextBlock x:Uid="EmptyDescription"
+                           FontSize="13" TextWrapping="Wrap" TextAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8" Margin="0,12,0,8">
+                    <Button Click="OnOpenFolder" Style="{StaticResource PrimaryCapsuleStyle}"
+                            IsEnabled="{x:Bind local:MainPage.Not(ViewModel.IsImporting), Mode=OneWay}" AutomationProperties.AutomationId="EmptyOpenFolder">
+                        <StackPanel Orientation="Horizontal" Spacing="8"><FontIcon Glyph="&#xE8B7;" FontSize="13"/><TextBlock x:Uid="EmptyOpenFolderLabel"/></StackPanel>
+                    </Button>
+                    <Button x:Name="EmptyMuseum" Click="OnOpenMuseum" Style="{StaticResource QuietCapsuleStyle}" MinHeight="32" Visibility="Collapsed"
+                            IsEnabled="{x:Bind local:MainPage.Not(ViewModel.IsImporting), Mode=OneWay}" AutomationProperties.AutomationId="EmptyOpenMuseum">
+                        <StackPanel Orientation="Horizontal" Spacing="8"><FontIcon Glyph="&#xE7BE;" FontSize="13"/><TextBlock x:Uid="EmptyMuseumLabel"/></StackPanel>
+                    </Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="6">
+                    <FontIcon Glyph="&#xE72E;" FontSize="11" Foreground="{ThemeResource TextFillColorTertiaryBrush}"/>
+                    <TextBlock x:Uid="EmptyPrivacyNote" FontSize="12" Foreground="{ThemeResource TextFillColorTertiaryBrush}"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <Border x:Name="ImportPanel" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="280,0,0,20"
+                Width="380" Padding="18,16" Style="{StaticResource GlassPanelStyle}" Visibility="Collapsed" SizeChanged="OnGlassSizeChanged"
+                PointerEntered="OnPanelPointerEntered">
+            <Grid RowSpacing="10" ColumnSpacing="12">
+                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                <TextBlock x:Uid="ImportTitle" FontSize="14" FontWeight="SemiBold"/>
+                <Grid Grid.Row="1" Grid.ColumnSpan="2" Height="4" CornerRadius="2" Background="{ThemeResource BarTrackBrush}">
+                    <Border CornerRadius="2" Background="{ThemeResource MonoInkBrush}" RenderTransformOrigin="0,0.5" AutomationProperties.AutomationId="ImportProgress">
+                        <Border.RenderTransform><ScaleTransform x:Name="ImportBar" ScaleX="0"/></Border.RenderTransform>
+                    </Border>
+                </Grid>
+                <TextBlock Grid.Row="2" Text="{x:Bind ViewModel.ImportDetail, Mode=OneWay}" Style="{StaticResource CaptionStyle}" TextTrimming="CharacterEllipsis"
+                           AutomationProperties.LiveSetting="Polite"/>
+                <Button Grid.Row="2" Grid.Column="1" x:Uid="CancelImportButton" Click="OnCancelImport" Style="{StaticResource QuietCapsuleStyle}" MinHeight="26" Padding="12,2"
+                        AutomationProperties.AutomationId="CancelImport"/>
+            </Grid>
+        </Border>
+        <InfoBar IsOpen="{x:Bind ViewModel.HasError, Mode=TwoWay}" Severity="Warning" x:Uid="CollectionNotice" CornerRadius="16"
+                 Message="{x:Bind ViewModel.Error, Mode=OneWay}" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="280,0,16,20"
+                 MaxWidth="640" AutomationProperties.AutomationId="CollectionNotice"/>
+    </Grid>
+</Page>

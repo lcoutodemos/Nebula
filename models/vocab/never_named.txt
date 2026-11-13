@@ -1,0 +1,60 @@
+# Words the model is often sure of that never make a useful name: what a thing is used for,
+# a process, a material state, or a person's role, which a photograph cannot show.
+# They stay in the wide list as evidence of what a group contains, but never name one.
+
+3d printed part
+arrangement
+artifact
+artist
+asia temple
+background
+chef
+client
+close up
+coach
+collection
+composition
+cousin
+customer
+demonstration
+designer
+detail
+device
+display
+engineer
+equipment
+exhibit
+experiment
+foreground
+host
+installation view
+item
+material
+musician
+neighbor
+object
+participant
+passenger
+photographer
+player
+presentation
+product
+product design sketch
+professor
+prototype
+putt
+researcher
+rider
+sample
+scientist
+sensor
+speaker
+specimen
+spectator
+still life
+student
+surface
+teacher
+texture
+tourist
+worker

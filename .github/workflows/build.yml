@@ -1,0 +1,59 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build (${{ matrix.platform }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: x64
+            runner: windows-latest
+          - platform: ARM64
+            runner: windows-11-arm
+    runs-on: ${{ matrix.runner }}
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Build tools
+        shell: pwsh
+        run: |
+          dotnet build tools\Nebula.Embed.Cli\Nebula.Embed.Cli.csproj -c Release
+          dotnet build tools\Nebula.Import\Nebula.Import.csproj -c Release
+
+      - name: Restore app
+        shell: pwsh
+        run: dotnet restore src\Nebula.Windows\Nebula.Windows.csproj -p:Platform=${{ matrix.platform }} -p:Configuration=Release
+
+      # Hosted runners have no GPU: compile the renderer's smoke tests but don't run them.
+      - name: Build renderer
+        shell: pwsh
+        run: .\src\Nebula.Render\build.ps1 -Architecture ${{ matrix.platform }} -Configuration Release -BuildTestsOnly
+
+      - name: Build app
+        shell: pwsh
+        run: dotnet build src\Nebula.Windows\Nebula.Windows.csproj -p:Platform=${{ matrix.platform }} -c Release --no-restore -p:NebulaSkipNativeBuild=true
+
+      - name: Core checks
+        shell: pwsh
+        run: dotnet run -c Release --project tests\Nebula.Core.Tests
+
+      - name: Engine verification
+        shell: pwsh
+        run: dotnet run -c Release --project tools\Nebula.Embed.Cli -- --bench --stage verify --sizes 2 --out "$env:RUNNER_TEMP\bench"
