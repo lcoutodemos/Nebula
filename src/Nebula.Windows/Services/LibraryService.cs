@@ -15,7 +15,7 @@ public sealed record ImportProgress(int Processed, int Total, int Imported, stri
 
 public sealed class LibraryService
 {
-    public static string DataRoot { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Nebula", "Data");
+    public static string DataRoot { get; } = MoveEarlierData(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Nebula", "Data"));
     private static readonly HashSet<string> Extensions = [".jpg", ".jpeg", ".png", ".webp", ".tif", ".tiff", ".bmp", ".heic", ".heif"];
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
     public static string PreferencesPath => Path.Combine(DataRoot, "preferences.json");
@@ -39,6 +39,21 @@ public sealed class LibraryService
             }
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException) { }
+    }
+
+    /// Earlier builds kept their data in Nebula\Windows. Rename that folder once so imported collections,
+    /// thumbnails and embeddings carry over. If it can't be renamed, keep using it: nothing is re-imported.
+    private static string MoveEarlierData(string root)
+    {
+        var earlier = Path.Combine(Path.GetDirectoryName(root)!, "Windows");
+        if (!Directory.Exists(earlier) || Directory.Exists(Path.Combine(root, "Libraries"))) return root;
+        try
+        {
+            if (Directory.Exists(root) && !Directory.EnumerateFileSystemEntries(root).Any()) Directory.Delete(root);
+            Directory.Move(earlier, root);
+            return root;
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException) { return earlier; }
     }
 
     public async Task<Library?> LastLibraryAsync()

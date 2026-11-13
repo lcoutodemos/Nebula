@@ -6,6 +6,9 @@ namespace Nebula_Windows.Services;
 public sealed class UiState
 {
     private static readonly string StatePath = Path.Combine(LibraryService.DataRoot, "ui-state.json");
+    /// Where earlier builds kept these preferences. Read only until the first save.
+    private static readonly string EarlierStatePath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "NebulaWindows", "ui-state.json");
 
     public string Appearance { get; set; } = "System";
     public bool IsSidebarVisible { get; set; } = true;
@@ -17,8 +20,9 @@ public sealed class UiState
     {
         try
         {
-            var state = File.Exists(StatePath)
-                ? JsonSerializer.Deserialize<UiState>(File.ReadAllText(StatePath)) ?? new()
+            var path = File.Exists(StatePath) ? StatePath : EarlierStatePath;
+            var state = File.Exists(path)
+                ? JsonSerializer.Deserialize<UiState>(File.ReadAllText(path)) ?? new()
                 : new UiState();
             state.FavouriteIds ??= [];
             return state;
